@@ -1,4 +1,6 @@
+from typing import List
 from base64 import b64encode
+import re
 
 def hex_to_bytes(str: str) -> bytes:
     "Turns a hex string string to a list of bytes"
@@ -33,3 +35,8 @@ def find_xor_key(input: str) -> str:
         if (re.fullmatch(r"[a-zA-Z\s']+", human_readable_output)):
             return [key, human_readable_output]
 
+def read_string_array_file(path: str) -> List[str]:
+    "Takes a path to a file containing a list of strings and returns an array of strings"
+    with open(path, "r") as f:
+        lines = [line.strip() for line in f]
+        return lines
