@@ -7,7 +7,7 @@
 # ... should produce:
 # 746865206b696420646f6e277420706c6179
 
-from base64 import b64encode
+from utils import xor_hex_strings
 
 if __name__ == "__main__":
     print("## Set 1 - Challenge 2")
@@ -15,10 +15,7 @@ if __name__ == "__main__":
     b = "686974207468652062756c6c277320657965"
     expected = "746865206b696420646f6e277420706c6179"
     
-    bytesA = bytes.fromhex(a)
-    bytesB = bytes.fromhex(b)
-    xored = bytes([x ^ y for x, y in zip(bytesA, bytesB)])
-    output = xored.hex()
+    output = xor_hex_strings(a, b)
     
     print("✅ Passed" if expected == output else "❌ Failed")
     print(f"Input: {a} {b}")
