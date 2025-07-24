@@ -49,3 +49,8 @@ def read_string_array_file(path: str) -> List[str]:
     with open(path, "r") as f:
         lines = [line.strip() for line in f]
         return lines
+
+
+def str_to_hex(str: str) -> str:
+    "Takes a plaintext string and encodes it to hex"
+    return str.encode("utf-8").hex()
