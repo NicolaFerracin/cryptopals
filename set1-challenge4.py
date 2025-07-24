@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     for index, string in enumerate(strings):
         result = find_xor_key(string)
-        if (result is not None):
+        if result is not None:
             print("✅ Passed")
             print(f"String {string} at index {index} is encoded with key {result[0]}")
             print(f"Output: {result[1]}")
