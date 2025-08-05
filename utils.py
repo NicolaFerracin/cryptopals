@@ -1,5 +1,6 @@
+import bitarray
 from typing import List
-from base64 import b64encode
+from base64 import b64encode, b64decode
 from typing import NamedTuple
 
 
@@ -11,6 +12,11 @@ def hex_to_bytes(str: str) -> bytes:
 def hex_bytes_to_base64(hex_bytes: bytes) -> str:
     "Encodes the byte representation of a hex string to base64"
     return b64encode(hex_bytes).decode()
+
+
+def from_base64(str: str) -> bytes:
+    "Decodes a base64-encrypted string into its bytes representation"
+    return b64decode(str)
 
 
 def xor_hex_strings(a: str, b: str) -> str:
@@ -74,6 +80,39 @@ def read_string_array_file(path: str) -> List[str]:
         return lines
 
 
+def read_file(path: str) -> str:
+    "Returns the content of the file at path"
+    file = open(path, "r")
+    content = file.read()
+    file.close()
+    return content
+
+
 def str_to_hex(str: str) -> str:
     "Takes a plaintext string and encodes it to hex"
     return str.encode("utf-8").hex()
+
+
+def hex_to_str(str: str) -> str:
+    "Takes a hex string and decodes it to a plaintext string"
+    return hex_to_bytes(str).decode("utf-8", errors="replace").encode("utf-8")
+
+
+def str_to_bytes(str: str) -> bytes:
+    "Turns a plaintext string into its bytes representation"
+    return str.encode()
+
+
+def hamming_distance(a: str, b: str) -> int:
+    """Calculates the Hamming distance between 2 strings.
+    The Hamming distance is calculated by xoring the 2 strings and returning the sum of the 1bits
+    Example:
+    00011010
+    10010011
+    vvvvvvvv xor
+    10001001 => 3
+    """
+    xored = hex_to_str(xor_hex_strings(str_to_hex(a), str_to_hex(b)))
+    ba = bitarray.bitarray()
+    ba.frombytes(xored)  # turns the string into a list of 0|1 bits
+    return sum(ba.tolist())  # the Hamming distance is the xored
