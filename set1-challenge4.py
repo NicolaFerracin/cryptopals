@@ -3,6 +3,7 @@
 # Find it.
 
 from utils import read_string_array_file, find_xor_key
+import re
 
 if __name__ == "__main__":
     print("## Set 1 - Challenge 4")
@@ -10,8 +11,8 @@ if __name__ == "__main__":
     strings = read_string_array_file("set1-challenge4.input")
 
     for index, string in enumerate(strings):
-        result = find_xor_key(string)
-        if result is not None:
+        [score, key, result] = find_xor_key(string)
+        if re.fullmatch(r"[a-zA-Z\s']+", result):
             print("✅ Passed")
-            print(f"String {string} at index {index} is encoded with key {result[0]}")
-            print(f"Output: {result[1]}")
+            print(f"String {string} at index {index} is encoded with key {key}")
+            print(f"Output: {result}")
