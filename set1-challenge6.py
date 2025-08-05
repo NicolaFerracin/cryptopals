@@ -24,13 +24,12 @@
 from itertools import combinations
 import statistics
 from utils import (
+    bytes_to_str,
     find_xor_key,
     from_base64,
     hamming_distance,
-    hex_to_str,
     read_file,
-    str_to_hex,
-    xor_hex_strings,
+    xor_bytes,
 )
 
 if __name__ == "__main__":
@@ -42,7 +41,7 @@ if __name__ == "__main__":
     # 1. Let KEYSIZE be the guessed length of the key; try values from 2 to (say) 40.
     min_dist = float("inf")
     keysize = 0
-    for curr_keysize in range(2, 30):
+    for curr_keysize in range(2, 40):
         # 3. For each KEYSIZE, take the first KEYSIZE worth of bytes, and the second KEYSIZE worth of bytes, and find the edit distance between them. Normalize this result by dividing by KEYSIZE.
 
         # We start by taking the first 4 blocks of size KEYSIZE
@@ -68,26 +67,23 @@ if __name__ == "__main__":
     blocks = [input[i : i + keysize] for i in range(0, len(input), keysize)]
 
     # 6. Now transpose the blocks: make a block that is the first byte of every block, and a block that is the second byte of every block, and so on.
-    transposed_blocks = ["" for i in range(0, keysize)]
+    transposed_blocks = [bytearray() for _ in range(keysize)]
     for block in blocks:
-        for index in range(0, len(block)):
-            transposed_blocks[index] += chr(block[index])
+        for i, byte in enumerate(block):
+            transposed_blocks[i].append(byte)
 
     # 7. Solve each block as if it was single-character XOR. You already have code to do this.
-    key = ""
-    for t_block in transposed_blocks:
+    key_bytes = []
+    for transposed_block in transposed_blocks:
         # 8. For each block, the single-byte XOR key that produces the best looking histogram is the repeating-key XOR key byte for that block. Put them together and you have the key.
-        result = find_xor_key(str_to_hex(t_block))
-        key += result.key
+        result = find_xor_key(bytes(transposed_block))
+        key_bytes.append(result.key)
 
-    result = hex_to_str(xor_hex_strings(input.hex(), key))
+    key = bytes(key_bytes)
+    plaintext = bytes_to_str(xor_bytes(input, key))
     expected_first_100_chars = "I'm back and I'm ringin' the bell \nA rockin' on the mike while the fly girls yell \nIn ecstasy in the"
 
-    print(
-        "✅ Passed"
-        if expected_first_100_chars == result[0:100].decode()
-        else "❌ Failed"
-    )
-    print(f"Keysize: {keysize} - Key: {hex_to_str(key).decode()}")
+    print("✅ Passed" if expected_first_100_chars == plaintext[0:100] else "❌ Failed")
+    print(f"Keysize: {keysize} - Key: {bytes_to_str(key)}")
     print("Result Excerpt:")
-    print(result[0:200].decode(), "...")
+    print(plaintext[0:200], "...")

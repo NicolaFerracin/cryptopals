@@ -6,15 +6,16 @@
 # How? Devise some method for "scoring" a piece of English plaintext.
 # Character frequency is a good metric. Evaluate each output and choose the one with the best score.
 
-from utils import find_xor_key
+from utils import find_xor_key, hex_to_bytes
 
 if __name__ == "__main__":
     print("## Set 1 - Challenge 3")
     input = "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736"
+    expected = "Cooking MC's like a pound of bacon"
 
     # To revert a XOR we apply XOR again.
     # We need to find the character that xored to the input, produces plaintext English
-    [key, output] = find_xor_key(input)
+    result = find_xor_key(hex_to_bytes(input))
 
-    print("✅ Passed")
-    print(f"Key: {key} - Output: {output}")
+    print("✅ Passed" if expected == result.plaintext else "❌ Failed")
+    print(f"Key: {result.key} - Output: {result.plaintext}")
